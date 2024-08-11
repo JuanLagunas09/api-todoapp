@@ -3,11 +3,12 @@ import userRouter from "./routes/userRouter";
 import { config } from "./config/config";
 import { dbConnection } from "./config/db";
 import { errorHandler, errorHandlerBoom } from "./middlewares/errorHandler";
-import { authRouter } from "./routes/authRouter";
+import authRouter from "./routes/authRouter";
+import taskRouter from "./routes/taskRouter";
 import passport from "passport";
 
 // se inicializa la autenticación
-import ("./utils/auth/authStrategy");
+import("./utils/auth/authStrategy");
 
 // se define el puerto
 const PORT = config.PORT;
@@ -20,7 +21,6 @@ app.use(express.json());
 const router = express.Router();
 app.use("/api/v1", router);
 
-
 router.get("/hello", (_, res) => {
   res.send("Hello World!");
 });
@@ -30,8 +30,14 @@ router.use("/auth", authRouter);
 router.use(
   "/user",
   passport.authenticate("jwt", { session: false }),
-  userRouter);
+  userRouter
+);
 
+router.use(
+  "/task",
+  passport.authenticate("jwt", { session: false }),
+  taskRouter
+);
 
 // se maneja los errores
 app.use(errorHandlerBoom);
